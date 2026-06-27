@@ -37,7 +37,7 @@ export default function TerminalNav() {
     { label: "Markets", href: "/browse", icon: LayoutGrid, gated: false },
     { label: "Trending", href: "/trending", icon: TrendingUp, gated: false },
     { label: "Portfolio", href: "/portfolio", icon: Briefcase, gated: true },
-    { label: "Copy", href: "/copy", icon: CopyIcon, gated: true },
+    { label: "Copy", href: "/copy", icon: CopyIcon, gated: false },
     { label: "Account", href: "#account", icon: User, gated: true },
   ] as const;
 
