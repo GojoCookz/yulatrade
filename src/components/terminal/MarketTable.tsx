@@ -81,7 +81,53 @@ function FlagThumb({ cc }: { cc: string }) {
 export default function MarketTable() {
   return (
     <div className="flex-1 overflow-auto">
-      <table className="w-full text-sm">
+      {/* Mobile: stacked cards */}
+      <div className="flex flex-col divide-y divide-white/[0.04] md:hidden">
+        {markets.map((m) => {
+          const c = TAG_COLORS[m.tag] ?? { dot: "bg-blue-400", text: "text-blue-400" };
+          return (
+            <Link
+              key={m.slug}
+              href={`/trade/${m.slug}`}
+              className="flex flex-col gap-2 px-3 py-3 active:bg-white/[0.03]"
+            >
+              <div className="flex items-start gap-3">
+                <FlagThumb cc={m.cc} />
+                <div className="min-w-0 flex-1">
+                  <p className="text-[13px] font-medium leading-snug text-white">{m.title}</p>
+                  <div className="mt-0.5 flex items-center gap-2 text-[11px]">
+                    <span className={`flex items-center gap-1 ${c.text}`}>
+                      <span className={`h-1 w-1 rounded-full ${c.dot}`} />
+                      {m.tag}
+                    </span>
+                    <span className="text-white/30">·</span>
+                    <span className={m.status === "Ended" ? "text-red-400/80" : "text-white/40"}>
+                      {m.status === "Ended" ? "● Ended" : `→ ${m.status}`}
+                    </span>
+                  </div>
+                </div>
+                <Sparkline trend={m.chartTrend} id={`m-${m.slug}`} />
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3 text-xs">
+                  <span className="whitespace-nowrap">
+                    <span className="font-semibold text-green-400">{m.yesPrice}¢</span>
+                    <span className="mx-1 text-white/20">/</span>
+                    <span className="font-semibold text-red-400">{m.noPrice}¢</span>
+                  </span>
+                  <span className="text-white/40">Vol {m.volume}</span>
+                </div>
+                <span className="inline-flex items-center gap-0.5 rounded-md bg-emerald-500 px-3 py-1 text-xs font-semibold text-white">
+                  Trade →
+                </span>
+              </div>
+            </Link>
+          );
+        })}
+      </div>
+
+      {/* Desktop: full table */}
+      <table className="hidden w-full text-sm md:table">
         <thead className="sticky top-0 z-10 bg-[#050505]">
           <tr className="text-[11px] uppercase tracking-wider text-white/35">
             <th className="px-4 py-3 text-left font-medium">Market</th>
