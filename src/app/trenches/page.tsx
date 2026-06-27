@@ -10,7 +10,7 @@ export default function TrenchesPage() {
       <TerminalNav />
       <TrenchesClient />
       <StatusBar />
-      <div className="h-7 shrink-0" />
+      <div className="h-16 shrink-0 lg:h-7" />
     </div>
   );
 }

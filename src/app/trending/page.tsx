@@ -15,7 +15,7 @@ export default function TrendingPage() {
       <MarketTable />
       <StatusBar />
       {/* Bottom spacer for status bar */}
-      <div className="h-7 shrink-0" />
+      <div className="h-16 shrink-0 lg:h-7" />
     </div>
   );
 }

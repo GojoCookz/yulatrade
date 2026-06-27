@@ -3,8 +3,9 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Search, Star, Bell, Wallet, User, Menu, X } from "lucide-react";
+import { Search, Star, Bell, Wallet, User, Menu, X, LayoutGrid, TrendingUp, Briefcase, Copy as CopyIcon } from "lucide-react";
 import YulaLogo from "@/components/YulaLogo";
+import AuthModal from "@/components/AuthModal";
 
 const navLinks = [
   { label: "Trending", href: "/trending" },
@@ -22,6 +23,23 @@ export default function TerminalNav() {
   const [marketUrl, setMarketUrl] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [authOpen, setAuthOpen] = useState(false);
+  const [authTab, setAuthTab] = useState<"login" | "signup">("login");
+
+  const openAuth = (tab: "login" | "signup" = "login") => {
+    setMobileOpen(false);
+    setAuthTab(tab);
+    setAuthOpen(true);
+  };
+
+  // Bottom-bar tabs. Gated ones prompt sign-in like the real site.
+  const bottomTabs = [
+    { label: "Markets", href: "/browse", icon: LayoutGrid, gated: false },
+    { label: "Trending", href: "/trending", icon: TrendingUp, gated: false },
+    { label: "Portfolio", href: "/portfolio", icon: Briefcase, gated: true },
+    { label: "Copy", href: "/copy", icon: CopyIcon, gated: true },
+    { label: "Account", href: "#account", icon: User, gated: true },
+  ] as const;
 
   return (
     <nav className="sticky top-0 z-50 flex h-14 items-center justify-between bg-[#050505] px-4 border-b border-white/5">
@@ -88,7 +106,10 @@ export default function TerminalNav() {
           <span className="text-[10px] text-white/30 border border-white/10 rounded px-1">/</span>
         </div>
 
-        <button className="flex items-center gap-1 rounded-full bg-green-500 px-3.5 py-1.5 text-xs font-bold text-white hover:bg-green-400 transition">
+        <button
+          onClick={() => openAuth("signup")}
+          className="flex items-center gap-1 rounded-full bg-green-500 px-3.5 py-1.5 text-xs font-bold text-white hover:bg-green-400 transition"
+        >
           <span>+</span> Deposit
         </button>
 
@@ -108,7 +129,11 @@ export default function TerminalNav() {
           </span>
         </button>
 
-        <button className="flex h-7 w-7 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-white/60 hover:bg-white/[0.06] transition" aria-label="Account">
+        <button
+          onClick={() => openAuth("login")}
+          className="flex h-7 w-7 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-white/60 hover:bg-white/[0.06] transition"
+          aria-label="Account"
+        >
           <User className="h-3.5 w-3.5" />
         </button>
       </div>
@@ -153,6 +178,35 @@ export default function TerminalNav() {
           </div>
         </>
       )}
+
+      {/* Mobile bottom tab bar (matches the real app's primary nav) */}
+      <div className="fixed inset-x-0 bottom-0 z-50 flex h-16 items-stretch border-t border-white/10 bg-[#050505]/95 backdrop-blur lg:hidden">
+        {bottomTabs.map((t) => {
+          const isActive = pathname === t.href;
+          const Icon = t.icon;
+          const content = (
+            <span
+              className={`flex h-full flex-1 flex-col items-center justify-center gap-1 text-[10px] font-medium transition ${
+                isActive ? "text-emerald-400" : "text-white/45"
+              }`}
+            >
+              <Icon className="h-5 w-5" />
+              {t.label}
+            </span>
+          );
+          return t.gated ? (
+            <button key={t.label} onClick={() => openAuth("login")} className="flex flex-1">
+              {content}
+            </button>
+          ) : (
+            <Link key={t.label} href={t.href} className="flex flex-1">
+              {content}
+            </Link>
+          );
+        })}
+      </div>
+
+      <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} initialTab={authTab} />
     </nav>
   );
 }

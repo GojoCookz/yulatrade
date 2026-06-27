@@ -485,6 +485,31 @@ export default function BrowseClient() {
       </aside>
 
       <div className="flex-1 overflow-auto">
+        {/* Mobile category pills */}
+        <div className="flex gap-2 overflow-x-auto border-b border-white/5 px-3 py-2.5 md:hidden [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {categories.map((cat) => {
+            const Icon = cat.icon;
+            const isActive = activeCategory === cat.id;
+            return (
+              <button
+                key={cat.id}
+                onClick={() => {
+                  setActiveCategory(cat.id);
+                  setActiveSub(null);
+                  updateUrl(cat.id, null);
+                }}
+                className={`flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition ${
+                  isActive
+                    ? "border-emerald-500/50 bg-emerald-500/15 text-emerald-200"
+                    : "border-white/10 bg-white/[0.03] text-white/60"
+                }`}
+              >
+                <Icon className="h-3.5 w-3.5" />
+                {cat.label}
+              </button>
+            );
+          })}
+        </div>
         <div className="flex items-center justify-between border-b border-white/5 px-5 py-3">
           <div className="flex items-center gap-2 flex-wrap">
             {subItems ? (

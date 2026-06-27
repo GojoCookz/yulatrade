@@ -4,7 +4,7 @@ import { Wallet, BarChart3, Gift, Send, VolumeX, Smile } from "lucide-react";
 
 export default function StatusBar() {
   return (
-    <footer className="fixed bottom-0 left-0 right-0 z-50 flex h-7 items-center justify-between border-t border-white/5 bg-[#080114] px-3 text-[10px]">
+    <footer className="fixed bottom-0 left-0 right-0 z-50 hidden h-7 items-center justify-between border-t border-white/5 bg-[#080114] px-3 text-[10px] lg:flex">
       <div className="flex items-center gap-3">
         <div className="flex items-center gap-1">
           <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
