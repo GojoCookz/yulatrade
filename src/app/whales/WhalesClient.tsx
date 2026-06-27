@@ -18,33 +18,18 @@ interface WhaleTrade {
   usdc: number;
 }
 
-const INITIAL_TRADES: WhaleTrade[] = [
-  { ageSec: 4, wallet: "0x7a63...b4ef", side: "Buy", outcome: "Yes", market: "2028 US presidential winner?", category: "politics", price: 0.46, shares: 195652, usdc: 90000 },
-  { ageSec: 12, wallet: "0xe299...34dd", side: "Sell", outcome: "No", market: "Bitcoin tops 200k by close of 2026?", category: "crypto", price: 0.66, shares: 113636, usdc: 75000 },
-  { ageSec: 33, wallet: "0x2940...5ab3", side: "Buy", outcome: "Yes", market: "2026 FIFA World Cup winner?", category: "sports", price: 0.12, shares: 416666, usdc: 50000 },
-  { ageSec: 58, wallet: "0xabc1...2def", side: "Buy", outcome: "Yes", market: "Federal Reserve cuts in July?", category: "finance", price: 0.61, shares: 213114, usdc: 130000 },
-  { ageSec: 124, wallet: "0x4f10...991e", side: "Sell", outcome: "Yes", market: "GPT-5 shipped before September?", category: "tech", price: 0.65, shares: 76923, usdc: 50000 },
-  { ageSec: 188, wallet: "0xdf02...112c", side: "Buy", outcome: "No", market: "Best Picture at 2026 Oscars?", category: "culture", price: 0.18, shares: 277777, usdc: 50000 },
-  { ageSec: 240, wallet: "0x7a63...b4ef", side: "Buy", outcome: "Yes", market: "Solana hits 300 in April?", category: "crypto", price: 0.31, shares: 161290, usdc: 50000 },
-  { ageSec: 312, wallet: "0x9012...88ab", side: "Sell", outcome: "Yes", market: "Russia x Ukraine ceasefire by May 31, 2026?", category: "politics", price: 0.96, shares: 31250, usdc: 30000 },
-  { ageSec: 401, wallet: "0xbf21...cc81", side: "Buy", outcome: "Yes", market: "NBA Playoffs: Eastern Conference champion?", category: "sports", price: 0.18, shares: 555555, usdc: 100000 },
-  { ageSec: 489, wallet: "0xa221...f0b7", side: "Buy", outcome: "Yes", market: "Will Bitcoin hit 150k in 2026?", category: "crypto", price: 0.44, shares: 90909, usdc: 40000 },
-  { ageSec: 590, wallet: "0x331a...e451", side: "Sell", outcome: "No", market: "Iran-US nuclear deal signed by year end?", category: "politics", price: 0.82, shares: 60975, usdc: 50000 },
-  { ageSec: 680, wallet: "0xe299...34dd", side: "Buy", outcome: "Yes", market: "Ethereum tops 5k in April?", category: "crypto", price: 0.22, shares: 227272, usdc: 50000 },
-];
+// No fabricated whale activity — the feed and leaderboard start empty.
+const INITIAL_TRADES: WhaleTrade[] = [];
 
-const TOP_WHALES = [
-  { rank: 1, wallet: "0x7a63...b4ef", vol30d: "$12.4M", winRate: 78, trades: 892, pnl: "+$1.84M", pnlPos: true },
-  { rank: 2, wallet: "0xe299...34dd", vol30d: "$8.7M", winRate: 71, trades: 534, pnl: "+$1.12M", pnlPos: true },
-  { rank: 3, wallet: "0xabc1...2def", vol30d: "$7.9M", winRate: 69, trades: 388, pnl: "+$894K", pnlPos: true },
-  { rank: 4, wallet: "0x2940...5ab3", vol30d: "$6.2M", winRate: 65, trades: 412, pnl: "+$510K", pnlPos: true },
-  { rank: 5, wallet: "0x4f10...991e", vol30d: "$5.1M", winRate: 73, trades: 215, pnl: "+$420K", pnlPos: true },
-  { rank: 6, wallet: "0xdf02...112c", vol30d: "$4.4M", winRate: 60, trades: 305, pnl: "+$310K", pnlPos: true },
-  { rank: 7, wallet: "0xbf21...cc81", vol30d: "$3.9M", winRate: 57, trades: 178, pnl: "-$56K", pnlPos: false },
-  { rank: 8, wallet: "0xa221...f0b7", vol30d: "$3.6M", winRate: 62, trades: 244, pnl: "+$198K", pnlPos: true },
-  { rank: 9, wallet: "0x331a...e451", vol30d: "$3.2M", winRate: 58, trades: 192, pnl: "+$120K", pnlPos: true },
-  { rank: 10, wallet: "0x9012...88ab", vol30d: "$2.8M", winRate: 54, trades: 165, pnl: "-$90K", pnlPos: false },
-];
+const TOP_WHALES: {
+  rank: number;
+  wallet: string;
+  vol30d: string;
+  winRate: number;
+  trades: number;
+  pnl: string;
+  pnlPos: boolean;
+}[] = [];
 
 const CATEGORY_TINT: Record<WhaleTrade["category"], string> = {
   politics: "text-blue-400",
@@ -84,21 +69,6 @@ export default function WhalesClient() {
     return () => clearInterval(id);
   }, []);
 
-  // periodically insert a fresh whale trade at the top
-  useEffect(() => {
-    const samples: Omit<WhaleTrade, "ageSec">[] = [
-      { wallet: "0x4d11...77f2", side: "Buy", outcome: "Yes", market: "What price will Bitcoin hit in April?", category: "crypto", price: 0.49, shares: 81632, usdc: 40000 },
-      { wallet: "0x8821...9c34", side: "Sell", outcome: "Yes", market: "UEFA Champions League final winner?", category: "sports", price: 0.41, shares: 60975, usdc: 25000 },
-      { wallet: "0xa991...bb04", side: "Buy", outcome: "No", market: "Federal Reserve cuts in July?", category: "finance", price: 0.39, shares: 153846, usdc: 60000 },
-      { wallet: "0x2c01...51ef", side: "Buy", outcome: "Yes", market: "Democratic nominee 2028?", category: "politics", price: 0.27, shares: 185185, usdc: 50000 },
-    ];
-    const id = setInterval(() => {
-      const s = samples[Math.floor(Math.random() * samples.length)];
-      setTrades((ts) => [{ ...s, ageSec: 0 }, ...ts].slice(0, 60));
-    }, 6000);
-    return () => clearInterval(id);
-  }, []);
-
   const filtered = trades.filter((t) => {
     if (t.usdc < minSize) return false;
     if (category !== "all" && t.category !== category) return false;
@@ -120,7 +90,11 @@ export default function WhalesClient() {
               <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
               Live
             </span>
-            <span className="text-xs text-white/40">{filtered.length} trades · ${(total24h / 1e6).toFixed(2)}M total · {activeWhales} active whales · biggest ${(biggest / 1000).toFixed(1)}K</span>
+            <span className="text-xs text-white/40">
+              {filtered.length === 0
+                ? "Live whale trades will appear here"
+                : `${filtered.length} trades · $${(total24h / 1e6).toFixed(2)}M total · ${activeWhales} active whales · biggest $${(biggest / 1000).toFixed(1)}K`}
+            </span>
           </div>
 
           <div className="flex items-center gap-2 text-xs">
@@ -185,6 +159,19 @@ export default function WhalesClient() {
               </tr>
             </thead>
             <tbody>
+              {filtered.length === 0 && (
+                <tr>
+                  <td colSpan={9}>
+                    <div className="flex flex-col items-center justify-center px-6 py-20 text-center">
+                      <div className="rounded-full bg-white/[0.04] p-4">
+                        <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse block" />
+                      </div>
+                      <p className="mt-3 text-sm text-white/60">No whale activity yet</p>
+                      <p className="mt-1 text-xs text-white/40">Large trades across all markets will stream in here live.</p>
+                    </div>
+                  </td>
+                </tr>
+              )}
               {filtered.map((t, i) => (
                 <tr key={i} className="border-t border-white/[0.04] hover:bg-white/[0.02]">
                   <td className="px-3 py-2 text-white/50">{formatAge(t.ageSec)}</td>
@@ -219,6 +206,12 @@ export default function WhalesClient() {
           <p className="mt-0.5 text-[10px] text-white/40">Ranked by trading volume</p>
         </div>
         <div className="divide-y divide-white/[0.04]">
+          {TOP_WHALES.length === 0 && (
+            <div className="px-4 py-12 text-center">
+              <p className="text-xs text-white/50">No ranked whales yet</p>
+              <p className="mt-1 text-[10px] text-white/30">The 30-day leaderboard populates as wallets trade.</p>
+            </div>
+          )}
           {TOP_WHALES.map((w) => (
             <div key={w.rank} className="px-4 py-2.5 hover:bg-white/[0.02] transition">
               <div className="flex items-center justify-between">
