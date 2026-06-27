@@ -110,11 +110,11 @@ export default function WhalesClient() {
   const activeWhales = new Set(trades.map((t) => t.wallet)).size;
 
   return (
-    <div className="flex flex-1 overflow-hidden">
+    <div className="flex flex-1 flex-col overflow-y-auto lg:flex-row lg:overflow-hidden">
       {/* Left feed */}
-      <div className="flex flex-1 flex-col">
-        <div className="flex items-center justify-between border-b border-white/5 px-4 py-3">
-          <div className="flex items-center gap-3">
+      <div className="flex min-w-0 flex-1 flex-col">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/5 px-4 py-3">
+          <div className="flex flex-wrap items-center gap-3">
             <h1 className="text-lg font-bold text-white">Whales</h1>
             <span className="flex items-center gap-1 text-[11px] text-green-400">
               <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
@@ -213,7 +213,7 @@ export default function WhalesClient() {
       </div>
 
       {/* Right leaderboard */}
-      <aside className="w-[340px] shrink-0 border-l border-white/5 bg-[#050505] overflow-auto">
+      <aside className="w-full shrink-0 border-t border-white/5 bg-[#050505] overflow-auto lg:w-[340px] lg:border-l lg:border-t-0">
         <div className="border-b border-white/5 px-4 py-3">
           <h2 className="text-sm font-bold text-white">Top Whales · 30D</h2>
           <p className="mt-0.5 text-[10px] text-white/40">Ranked by trading volume</p>

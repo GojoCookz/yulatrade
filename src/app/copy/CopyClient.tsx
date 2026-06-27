@@ -55,7 +55,7 @@ export default function CopyClient() {
 
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
-      <div className="flex items-center justify-between border-b border-white/5 px-4 py-3">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/5 px-4 py-3">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1.5">
             <CopyIcon className="h-4 w-4 text-emerald-400" />
@@ -64,7 +64,7 @@ export default function CopyClient() {
           <span className="text-xs text-white/40">Mirror the trades of top-performing wallets. Set a fixed copy size and the rest is automatic.</span>
         </div>
 
-        <div className="flex items-center gap-2 text-xs">
+        <div className="flex flex-wrap items-center gap-2 text-xs">
           <div className="flex items-center gap-1 rounded-md border border-white/10 bg-white/[0.02] px-2 py-1">
             <span className="text-white/40">Copy size:</span>
             <input

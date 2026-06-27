@@ -129,11 +129,11 @@ export default function UpDownClient() {
   const downPrice = 45.0;
 
   return (
-    <div className="flex flex-1 overflow-hidden">
+    <div className="flex flex-1 flex-col overflow-y-auto lg:flex-row lg:overflow-hidden">
       {/* Main column */}
-      <div className="flex flex-1 flex-col">
+      <div className="flex min-w-0 flex-1 flex-col">
         {/* Coin + timeframe + round bar */}
-        <div className="flex items-center justify-between border-b border-white/5 bg-[#050505] px-3 py-2">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/5 bg-[#050505] px-3 py-2">
           <div className="flex items-center gap-2">
             {(Object.keys(COIN_META) as Coin[]).map((c) => {
               const active = coin === c;
@@ -198,7 +198,7 @@ export default function UpDownClient() {
         </div>
 
         {/* TradingView chart */}
-        <div className="relative flex-1 overflow-hidden bg-[#050505]">
+        <div className="relative h-[55vh] min-h-[320px] overflow-hidden bg-[#050505] lg:h-auto lg:flex-1">
           <iframe
             key={`${coin}-${tf}`}
             src={tvSrc}
@@ -213,8 +213,8 @@ export default function UpDownClient() {
 
         {/* Bottom tabs */}
         <div className="border-t border-white/5 bg-[#050505]">
-          <div className="flex items-center justify-between border-b border-white/5 px-3 py-2">
-            <div className="flex items-center gap-4 text-xs">
+          <div className="flex items-center justify-between gap-2 border-b border-white/5 px-3 py-2">
+            <div className="flex items-center gap-4 overflow-x-auto text-xs">
               {["Trades", "Orderbook", "Holders", "Related Markets", "Positions"].map((t, i) => (
                 <button
                   key={t}
@@ -277,7 +277,7 @@ export default function UpDownClient() {
       </div>
 
       {/* Right order panel */}
-      <aside className="w-[320px] shrink-0 overflow-y-auto border-l border-white/5 bg-[#050505] px-4 py-3">
+      <aside className="w-full shrink-0 overflow-y-auto border-t border-white/5 bg-[#050505] px-4 py-3 lg:w-[320px] lg:border-l lg:border-t-0">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1.5">
             <TrendingUp className="h-4 w-4 text-emerald-400" />
