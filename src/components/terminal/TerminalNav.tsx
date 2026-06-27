@@ -106,22 +106,31 @@ export default function TerminalNav() {
           <span className="text-[10px] text-white/30 border border-white/10 rounded px-1">/</span>
         </div>
 
+        {/* Mobile-only search icon (opens the drawer search) */}
         <button
-          onClick={() => openAuth("signup")}
-          className="flex items-center gap-1 rounded-full bg-green-500 px-3.5 py-1.5 text-xs font-bold text-white hover:bg-green-400 transition"
+          onClick={() => setMobileOpen((o) => !o)}
+          className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-white/60 hover:bg-white/[0.06] transition md:hidden"
+          aria-label="Search"
         >
-          <span>+</span> Deposit
+          <Search className="h-4 w-4" />
         </button>
 
-        <button className="text-white/40 hover:text-yellow-400 transition" aria-label="Favorite">
+        <button
+          onClick={() => openAuth("signup")}
+          className="flex items-center gap-1 rounded-full bg-green-500 px-3 py-1.5 text-xs font-bold text-white hover:bg-green-400 transition"
+        >
+          <span>+</span> <span className="hidden sm:inline">Deposit</span>
+        </button>
+
+        <button className="hidden text-white/40 hover:text-yellow-400 transition md:block" aria-label="Favorite">
           <Star className="h-4 w-4" />
         </button>
 
-        <button className="text-white/40 hover:text-white transition" aria-label="Notifications">
+        <button className="hidden text-white/40 hover:text-white transition md:block" aria-label="Notifications">
           <Bell className="h-4 w-4" />
         </button>
 
-        <button className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.03] px-2.5 py-1.5 text-xs font-medium text-white hover:bg-white/[0.06] transition">
+        <button className="hidden md:flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.03] px-2.5 py-1.5 text-xs font-medium text-white hover:bg-white/[0.06] transition">
           <Wallet className="h-3.5 w-3.5 text-white/60" />
           <span className="flex items-center gap-1">
             <span className="inline-block h-3 w-3 rounded-full bg-blue-500" />
@@ -129,12 +138,21 @@ export default function TerminalNav() {
           </span>
         </button>
 
+        {/* Desktop: account circle */}
         <button
           onClick={() => openAuth("login")}
-          className="flex h-7 w-7 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-white/60 hover:bg-white/[0.06] transition"
+          className="hidden h-7 w-7 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-white/60 hover:bg-white/[0.06] transition md:flex"
           aria-label="Account"
         >
           <User className="h-3.5 w-3.5" />
+        </button>
+
+        {/* Mobile: Login button (matches the real app) */}
+        <button
+          onClick={() => openAuth("login")}
+          className="rounded-full bg-emerald-500 px-4 py-1.5 text-xs font-bold text-white hover:bg-emerald-400 transition md:hidden"
+        >
+          Login
         </button>
       </div>
 
