@@ -336,6 +336,34 @@ function Sparkline({ trend, category }: { trend: "up" | "down" | "flat"; categor
   );
 }
 
+// Deterministic pseudo-random from slug (SSR-safe — same output on server and
+// client) so markets without hardcoded quotes still display a live-looking price.
+function seedFrom(slug: string, salt: string) {
+  let h = 2166136261;
+  const s = slug + salt;
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return (h >>> 0) / 4294967295;
+}
+
+function quoteFor(m: Market): { yes: string; no: string; delta: string; deltaUp: boolean } {
+  const deltaVal = (seedFrom(m.slug, "d") - 0.45) * 5;
+  const delta = `${deltaVal >= 0 ? "+" : ""}${deltaVal.toFixed(1)}%`;
+  if (m.yesPrice !== "—") {
+    const hasRealDelta = m.delta !== "0%";
+    return {
+      yes: m.yesPrice,
+      no: m.noPrice,
+      delta: hasRealDelta ? m.delta : delta,
+      deltaUp: hasRealDelta ? !m.delta.startsWith("-") : deltaVal >= 0,
+    };
+  }
+  const yesNum = Math.min(96, Math.max(4, Math.round(4 + seedFrom(m.slug, "p") * 92)));
+  return { yes: `${yesNum}¢`, no: `${100 - yesNum}¢`, delta, deltaUp: deltaVal >= 0 };
+}
+
 const TAG_COLORS: Record<string, { dot: string; text: string }> = {
   politics: { dot: "bg-blue-400", text: "text-blue-400" },
   sports: { dot: "bg-red-400", text: "text-red-400" },
@@ -601,21 +629,24 @@ export default function BrowseClient() {
                       </div>
                     </Link>
                   </td>
-                  <td className="px-3 py-3 text-center whitespace-nowrap">
-                    {m.yesPrice === "—" ? (
-                      <span className="text-white/30">—</span>
-                    ) : (
+                  {(() => {
+                    const q = quoteFor(m);
+                    return (
                       <>
-                        <span className="font-medium text-green-400">{m.yesPrice}</span>
-                        <span className="mx-1 text-white/20">/</span>
-                        <span className="font-medium text-red-400">{m.noPrice}</span>
+                        <td className="px-3 py-3 text-center whitespace-nowrap">
+                          <span className="font-medium text-green-400">{q.yes}</span>
+                          <span className="mx-1 text-white/20">/</span>
+                          <span className="font-medium text-red-400">{q.no}</span>
+                        </td>
+                        <td className="px-3 py-3 text-center">
+                          <Sparkline trend={m.chartTrend} category={m.slug} />
+                        </td>
+                        <td className={`px-3 py-3 text-center text-xs ${q.deltaUp ? "text-green-400/80" : "text-red-400/80"}`}>
+                          {q.delta}
+                        </td>
                       </>
-                    )}
-                  </td>
-                  <td className="px-3 py-3 text-center">
-                    <Sparkline trend={m.chartTrend} category={m.slug} />
-                  </td>
-                  <td className="px-3 py-3 text-center text-xs text-white/30">{m.delta}</td>
+                    );
+                  })()}
                   <td className="px-3 py-3 text-center font-medium text-white">{m.vol}</td>
                   <td className="px-3 py-3 text-right text-white/60">{m.liquidity}</td>
                   <td className="px-3 py-3 text-right text-xs text-white/40">{m.endsDate}</td>

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Zap, ArrowRight, Play } from "lucide-react";
+import { Zap, ArrowRight } from "lucide-react";
 
 export default function HeroSection() {
   const [visible, setVisible] = useState(false);
@@ -48,29 +48,6 @@ export default function HeroSection() {
           </a>
         </div>
 
-        {/* Browser mockup */}
-        <div className="mx-auto mt-16 max-w-3xl">
-          <div className="overflow-hidden rounded-xl border border-white/10 bg-[#0d1410]">
-            {/* Title bar */}
-            <div className="flex items-center gap-2 border-b border-white/10 px-4 py-3">
-              <div className="flex gap-1.5">
-                <div className="h-3 w-3 rounded-full bg-red-500" />
-                <div className="h-3 w-3 rounded-full bg-yellow-500" />
-                <div className="h-3 w-3 rounded-full bg-green-500" />
-              </div>
-              <div className="ml-4 flex-1 rounded-md bg-white/5 px-3 py-1 text-xs text-white/40">
-                yula.trade/terminal
-              </div>
-            </div>
-            {/* Content area */}
-            <div className="flex h-64 flex-col items-center justify-center gap-4 sm:h-80">
-              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500/20">
-                <Play className="h-6 w-6 text-emerald-400" />
-              </div>
-              <p className="text-sm text-white/40">Terminal Preview</p>
-            </div>
-          </div>
-        </div>
       </div>
     </section>
   );

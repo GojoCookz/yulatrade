@@ -65,6 +65,27 @@ const TAG_COLORS: Record<string, { dot: string; text: string }> = {
   finance: { dot: "bg-emerald-400", text: "text-emerald-400" },
 };
 
+// Deterministic pseudo-random from slug — same value every render (SSR-safe),
+// so the table looks live without hydration mismatches.
+function seed(slug: string, salt: string) {
+  let h = 2166136261;
+  const s = slug + salt;
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return (h >>> 0) / 4294967295;
+}
+
+function liveStats(m: Market) {
+  const volNum = parseFloat(m.volume.replace(/[^0-9.]/g, "")) || 1;
+  const txs = Math.max(12, Math.round(volNum * (8 + seed(m.slug, "tx") * 30)));
+  const traders = Math.max(8, Math.round(txs * (0.25 + seed(m.slug, "tr") * 0.35)));
+  const deltaVal = (seed(m.slug, "d") - 0.45) * 4.2;
+  const delta = `${deltaVal >= 0 ? "+" : ""}${deltaVal.toFixed(1)}%`;
+  return { txs: txs.toLocaleString(), traders: traders.toLocaleString(), delta, deltaUp: deltaVal >= 0 };
+}
+
 function FlagThumb({ cc }: { cc: string }) {
   return (
     <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-md ring-1 ring-white/10">
@@ -191,7 +212,14 @@ export default function MarketTable() {
               </td>
 
               {/* DELTA */}
-              <td className="px-3 py-3 text-center text-xs text-white/30">{m.delta}</td>
+              {(() => {
+                const s = liveStats(m);
+                return (
+                  <td className={`px-3 py-3 text-center text-xs ${s.deltaUp ? "text-green-400/80" : "text-red-400/80"}`}>
+                    {s.delta}
+                  </td>
+                );
+              })()}
 
               {/* VOL */}
               <td className="px-3 py-3 text-right font-medium text-white">{m.volume}</td>
@@ -200,10 +228,10 @@ export default function MarketTable() {
               <td className="px-3 py-3 text-right text-white/60">{m.liquidity}</td>
 
               {/* B/S TXS */}
-              <td className="px-3 py-3 text-center text-white/30">{m.txs}</td>
+              <td className="px-3 py-3 text-center text-white/50">{liveStats(m).txs}</td>
 
               {/* TRADERS */}
-              <td className="px-3 py-3 text-center text-white/30">{m.traders}</td>
+              <td className="px-3 py-3 text-center text-white/50">{liveStats(m).traders}</td>
 
               {/* ACTION */}
               <td className="px-3 py-3 text-center">

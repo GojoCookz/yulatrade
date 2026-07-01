@@ -5,6 +5,7 @@ import MillisecondSection from "@/components/MillisecondSection";
 import TelegramSection from "@/components/TelegramSection";
 import CopyTradingSection from "@/components/CopyTradingSection";
 import MarketsSection from "@/components/MarketsSection";
+import TokenSection from "@/components/TokenSection";
 import SecuritySection from "@/components/SecuritySection";
 import CTASection from "@/components/CTASection";
 import FAQSection from "@/components/FAQSection";
@@ -21,6 +22,7 @@ export default function Home() {
         <TelegramSection />
         <CopyTradingSection />
         <MarketsSection />
+        <TokenSection />
         <SecuritySection />
         <CTASection />
         <FAQSection />
