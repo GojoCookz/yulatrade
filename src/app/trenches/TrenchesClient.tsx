@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { getMarketImage } from "@/lib/marketImages";
 import {
   Search,
   Zap,
@@ -87,10 +88,10 @@ function TrenchCard({ t }: { t: Trench }) {
     >
       <div className="flex gap-2.5">
         {/* Thumb */}
-        <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg ring-1 ring-white/[0.15] bg-zinc-800">
+        <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg ring-1 ring-white/[0.15] bg-zinc-900">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={`https://picsum.photos/seed/${encodeURIComponent(t.slug)}/112/112`}
+            src={getMarketImage(t.title) ?? `https://picsum.photos/seed/${encodeURIComponent(t.slug)}/112/112`}
             alt=""
             className="h-full w-full object-cover"
             loading="lazy"

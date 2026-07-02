@@ -4,6 +4,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState, useCallback } fr
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Bell, Share2, Filter as FilterIcon, RefreshCw, Search, Zap, X } from "lucide-react";
+import { getMarketImage } from "@/lib/marketImages";
 
 /* ------------------------------------------------------------------ */
 /* Data                                                                */
@@ -147,6 +148,15 @@ function Sparkline({ trend, id }: { trend: Trend; id: string }) {
 }
 
 function Thumb({ m }: { m: Market }) {
+  const topical = getMarketImage(m.title);
+  if (topical) {
+    return (
+      <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-lg bg-zinc-900 ring-1 ring-white/[0.18]">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={topical} alt="" className="h-full w-full object-cover" loading="lazy" />
+      </div>
+    );
+  }
   if (m.cc) {
     return (
       <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-lg ring-1 ring-white/[0.18]">

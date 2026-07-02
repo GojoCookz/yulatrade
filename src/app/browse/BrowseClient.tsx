@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
+import { getMarketImage } from "@/lib/marketImages";
 import {
   Flame,
   Trophy,
@@ -385,11 +386,12 @@ function TagPill({ tag }: { tag: string }) {
 }
 
 function MarketIcon({ m }: { m: Market }) {
-  if (m.image) {
+  const topical = m.image ?? getMarketImage(m.title);
+  if (topical) {
     return (
-      <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-md ring-1 ring-white/10 bg-zinc-800">
+      <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-md ring-1 ring-white/[0.15] bg-zinc-900">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={m.image} alt="" className="h-full w-full object-cover" />
+        <img src={topical} alt="" className="h-full w-full object-cover" loading="lazy" />
       </div>
     );
   }
