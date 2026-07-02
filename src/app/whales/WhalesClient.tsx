@@ -57,8 +57,8 @@ function categorySlug(market: string): WhaleTrade["category"] {
 
 export default function WhalesClient() {
   const [trades, setTrades] = useState<WhaleTrade[]>(INITIAL_TRADES);
-  const [minSize, setMinSize] = useState<number>(10000);
-  const [timeRange, setTimeRange] = useState<"1h" | "24h" | "7d" | "30d">("24h");
+  const [minSize, setMinSize] = useState<number>(500);
+  const [timeRange, setTimeRange] = useState<"1H" | "6H" | "24H" | "7D">("24H");
   const [category, setCategory] = useState<"all" | WhaleTrade["category"]>("all");
 
   // age ticker
@@ -83,43 +83,45 @@ export default function WhalesClient() {
     <div className="flex flex-1 flex-col overflow-y-auto lg:flex-row lg:overflow-hidden">
       {/* Left feed */}
       <div className="flex min-w-0 flex-1 flex-col">
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/5 px-4 py-3">
-          <div className="flex flex-wrap items-center gap-3">
-            <h1 className="text-lg font-bold text-white">Whales</h1>
-            <span className="flex items-center gap-1 text-[11px] text-green-400">
-              <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
-              Live
-            </span>
-            <span className="text-xs text-white/40">
-              {filtered.length === 0
-                ? "Live whale trades will appear here"
-                : `${filtered.length} trades · $${(total24h / 1e6).toFixed(2)}M total · ${activeWhales} active whales · biggest $${(biggest / 1000).toFixed(1)}K`}
-            </span>
-          </div>
+        <div className="px-4 pt-3 lg:px-5">
+          <h1 className="flex items-center gap-2 text-lg font-bold text-white">
+            <span aria-hidden>🐋</span> Whale Tracker
+          </h1>
 
-          <div className="flex items-center gap-2 text-xs">
-            <span className="text-white/40">Min size:</span>
-            {[1000, 10000, 50000, 100000].map((v) => (
+          {/* Stats strip */}
+          <div className="mt-3 flex items-center gap-8 rounded-lg border border-white/[0.08] bg-white/[0.02] px-4 py-2.5">
+            <div>
+              <p className="text-[9px] uppercase tracking-wider text-white/35">24h Volume</p>
+              <p className="mt-0.5 text-sm font-bold text-white">${(total24h / 1e6 >= 0.01 ? (total24h / 1e6).toFixed(2) + "M" : total24h.toFixed(2))}</p>
+            </div>
+            <div className="h-7 w-px bg-white/[0.06]" />
+            <div>
+              <p className="text-[9px] uppercase tracking-wider text-white/35">Top Market</p>
+              <p className="mt-0.5 text-sm font-bold text-white/60">—</p>
+            </div>
+            <div className="h-7 w-px bg-white/[0.06]" />
+            <div>
+              <p className="text-[9px] uppercase tracking-wider text-white/35">Biggest</p>
+              <p className="mt-0.5 text-sm font-bold text-emerald-300">${biggest >= 1000 ? `${(biggest / 1000).toFixed(1)}K` : biggest.toFixed(2)}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-2.5 lg:px-5">
+          <div className="flex flex-wrap items-center gap-2 text-xs">
+            <span className="flex items-center gap-1 text-white/40">
+              <FilterIcon className="h-3 w-3" />
+              Min:
+            </span>
+            {[500, 1000, 5000, 10000].map((v) => (
               <button
                 key={v}
                 onClick={() => setMinSize(v)}
-                className={`rounded-md px-2.5 py-1 font-medium transition ${
-                  minSize === v ? "bg-emerald-500/20 text-emerald-200 ring-1 ring-emerald-400/40" : "text-white/50 hover:text-white"
+                className={`rounded-full px-2.5 py-1 font-semibold transition ${
+                  minSize === v ? "bg-emerald-500 text-white" : "text-white/45 hover:text-white"
                 }`}
               >
-                ${v >= 1000 ? `${v / 1000}K` : v}+
-              </button>
-            ))}
-            <span className="mx-1 text-white/15">|</span>
-            {(["1h", "24h", "7d", "30d"] as const).map((r) => (
-              <button
-                key={r}
-                onClick={() => setTimeRange(r)}
-                className={`rounded-md px-2 py-1 font-medium transition ${
-                  timeRange === r ? "bg-white/10 text-white" : "text-white/50 hover:text-white"
-                }`}
-              >
-                {r}
+                {v >= 1000 ? `$${v / 1000}.0K` : `$${v}.00`}
               </button>
             ))}
             <span className="mx-1 text-white/15">|</span>
@@ -136,10 +138,18 @@ export default function WhalesClient() {
               <option value="tech">Tech</option>
               <option value="culture">Culture</option>
             </select>
-            <button className="ml-1 flex items-center gap-1 rounded-md border border-white/10 px-2 py-1 text-white/60 hover:bg-white/[0.05]">
-              <FilterIcon className="h-3 w-3" />
-              Filter
-            </button>
+            <span className="mx-1 text-white/15">|</span>
+            {(["1H", "6H", "24H", "7D"] as const).map((r) => (
+              <button
+                key={r}
+                onClick={() => setTimeRange(r)}
+                className={`rounded-full px-2.5 py-1 font-semibold transition ${
+                  timeRange === r ? "bg-emerald-500 text-white" : "text-white/45 hover:text-white"
+                }`}
+              >
+                {r}
+              </button>
+            ))}
           </div>
         </div>
 
@@ -166,8 +176,8 @@ export default function WhalesClient() {
                       <div className="rounded-full bg-white/[0.04] p-4">
                         <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse block" />
                       </div>
-                      <p className="mt-3 text-sm text-white/60">No whale activity yet</p>
-                      <p className="mt-1 text-xs text-white/40">Large trades across all markets will stream in here live.</p>
+                      <p className="mt-3 text-sm text-white/60">No whale trades found</p>
+                      <p className="mt-1 text-xs text-white/40">Try adjusting filters or check back later</p>
                     </div>
                   </td>
                 </tr>

@@ -1,7 +1,23 @@
 "use client";
 
 import { useState } from "react";
-import { Copy as CopyIcon, Check, Star, Users, TrendingUp, Filter as FilterIcon } from "lucide-react";
+import {
+  Target,
+  Search,
+  RefreshCcw,
+  Zap,
+  BarChart3,
+  Sparkles,
+  Star,
+  Users,
+  Copy as CopyIcon,
+  Check,
+} from "lucide-react";
+
+/* ------------------------------------------------------------------ */
+/* Discover leaderboard data (public trader stats, like the real       */
+/* Discover tab — not the user's own portfolio)                        */
+/* ------------------------------------------------------------------ */
 
 interface Trader {
   wallet: string;
@@ -27,169 +43,194 @@ const TRADERS: Trader[] = [
   { wallet: "0xbf21...cc81", alias: "BasisRipper", pnl30d: 19800, roi: 12.4, winRate: 57, trades: 178, followers: 410, copying: 22, avgSize: 660, tags: ["finance"] },
   { wallet: "0xa221...f0b7", pnl30d: 16200, roi: 9.7, winRate: 62, trades: 244, followers: 320, copying: 18, avgSize: 180, tags: ["sports", "esports"] },
   { wallet: "0x331a...e451", alias: "RiskParity", pnl30d: 12000, roi: 14.2, winRate: 58, trades: 192, followers: 280, copying: 14, avgSize: 410, proVerified: true, tags: ["finance"] },
-  { wallet: "0x9012...88ab", pnl30d: 9000, roi: 8.1, winRate: 54, trades: 165, followers: 210, copying: 9, avgSize: 220, tags: ["new"] },
 ];
 
-type Sort = "pnl" | "roi" | "winrate" | "followers" | "new";
+type Tab = "targets" | "performance" | "discover";
 
 export default function CopyClient() {
-  const [sort, setSort] = useState<Sort>("pnl");
-  const [proOnly, setProOnly] = useState(false);
+  const [tab, setTab] = useState<Tab>("targets");
+  const [walletQuery, setWalletQuery] = useState("");
+  const [spinning, setSpinning] = useState(false);
   const [copied, setCopied] = useState<Record<string, boolean>>({});
-  const [copyAmount, setCopyAmount] = useState(50);
 
   const toggleCopy = (wallet: string) => setCopied((p) => ({ ...p, [wallet]: !p[wallet] }));
 
-  const sorted = [...TRADERS]
-    .filter((t) => (proOnly ? t.proVerified : true))
-    .sort((a, b) => {
-      switch (sort) {
-        case "roi": return b.roi - a.roi;
-        case "winrate": return b.winRate - a.winRate;
-        case "followers": return b.followers - a.followers;
-        case "new": return a.trades - b.trades;
-        case "pnl":
-        default: return b.pnl30d - a.pnl30d;
-      }
-    });
+  const refresh = () => {
+    setSpinning(true);
+    setTimeout(() => setSpinning(false), 600);
+  };
+
+  const tabs = [
+    { id: "targets" as const, label: "My Targets", icon: Zap },
+    { id: "performance" as const, label: "Performance", icon: BarChart3 },
+    { id: "discover" as const, label: "Discover", icon: Sparkles },
+  ];
 
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/5 px-4 py-3">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5">
-            <CopyIcon className="h-4 w-4 text-emerald-400" />
-            <h1 className="text-lg font-bold text-white">Copy Trading</h1>
-          </div>
-          <span className="text-xs text-white/40">Mirror the trades of top-performing wallets. Set a fixed copy size and the rest is automatic.</span>
+      {/* Header */}
+      <div className="flex items-start justify-between px-4 pt-4 lg:px-6">
+        <div>
+          <h1 className="flex items-center gap-2 text-lg font-bold text-white">
+            <Target className="h-4.5 w-4.5 h-[18px] w-[18px] text-emerald-400" />
+            Copy Trading
+          </h1>
+          <p className="mt-0.5 text-xs text-white/40">Auto-mirror trades from top Polymarket wallets</p>
         </div>
-
-        <div className="flex flex-wrap items-center gap-2 text-xs">
-          <div className="flex items-center gap-1 rounded-md border border-white/10 bg-white/[0.02] px-2 py-1">
-            <span className="text-white/40">Copy size:</span>
-            <input
-              type="number"
-              value={copyAmount}
-              onChange={(e) => setCopyAmount(Number(e.target.value))}
-              className="w-16 bg-transparent text-right text-white outline-none"
-            />
-            <span className="text-white/40">USDC</span>
-          </div>
-          {(
-            [
-              { id: "pnl", label: "Top P&L" },
-              { id: "roi", label: "Top ROI" },
-              { id: "winrate", label: "Win Rate" },
-              { id: "followers", label: "Most Followed" },
-              { id: "new", label: "Rising" },
-            ] as const
-          ).map((s) => (
-            <button
-              key={s.id}
-              onClick={() => setSort(s.id as Sort)}
-              className={`rounded-md px-2.5 py-1 font-medium transition ${
-                sort === s.id ? "bg-emerald-500/20 text-emerald-200 ring-1 ring-emerald-400/40" : "text-white/50 hover:text-white"
-              }`}
-            >
-              {s.label}
-            </button>
-          ))}
-          <button
-            onClick={() => setProOnly((p) => !p)}
-            className={`flex items-center gap-1 rounded-md px-2.5 py-1 font-medium transition ${
-              proOnly ? "bg-yellow-500/15 text-yellow-300 ring-1 ring-yellow-500/30" : "text-white/50 hover:text-white"
-            }`}
-          >
-            <Star className="h-3 w-3" /> Pro Verified
-          </button>
-          <button className="ml-1 flex items-center gap-1 rounded-md border border-white/10 px-2 py-1 text-white/60 hover:bg-white/[0.05]">
-            <FilterIcon className="h-3 w-3" />
-            Filter
-          </button>
-        </div>
+        <button onClick={refresh} className="text-white/30 hover:text-white transition" aria-label="Refresh">
+          <RefreshCcw className={`h-3.5 w-3.5 ${spinning ? "animate-spin" : ""}`} />
+        </button>
       </div>
 
-      <div className="flex-1 overflow-auto p-4">
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-          {sorted.map((t) => (
-            <div key={t.wallet} className="group rounded-xl border border-white/[0.06] bg-[#0d1410]/60 p-4 transition hover:border-emerald-500/30">
-              <div className="flex items-start justify-between">
-                <div className="min-w-0">
-                  <div className="flex items-center gap-1.5">
-                    <p className="text-sm font-bold text-white truncate">{t.alias ?? t.wallet}</p>
-                    {t.proVerified && (
-                      <span className="flex items-center gap-0.5 rounded bg-yellow-500/15 px-1.5 py-px text-[9px] font-bold text-yellow-300">
-                        <Star className="h-2.5 w-2.5 fill-current" /> PRO
-                      </span>
-                    )}
-                  </div>
-                  {t.alias && <p className="font-mono text-[10px] text-emerald-300/70">{t.wallet}</p>}
-                </div>
-                <div className="text-right">
-                  <p className="text-[10px] text-white/40">30D P&L</p>
-                  <p className={`text-base font-bold ${t.pnl30d >= 0 ? "text-green-400" : "text-red-400"}`}>
-                    {t.pnl30d >= 0 ? "+" : ""}${(t.pnl30d / 1000).toFixed(1)}K
-                  </p>
-                </div>
-              </div>
-
-              <div className="mt-3 grid grid-cols-4 gap-2 text-center text-[10px]">
-                <div>
-                  <p className="text-white/40">ROI</p>
-                  <p className={`mt-0.5 font-mono text-xs font-semibold ${t.roi >= 20 ? "text-green-400" : "text-white"}`}>+{t.roi.toFixed(1)}%</p>
-                </div>
-                <div>
-                  <p className="text-white/40">Win</p>
-                  <p className={`mt-0.5 font-mono text-xs font-semibold ${t.winRate >= 65 ? "text-green-400" : "text-white"}`}>{t.winRate}%</p>
-                </div>
-                <div>
-                  <p className="text-white/40">Trades</p>
-                  <p className="mt-0.5 font-mono text-xs text-white">{t.trades}</p>
-                </div>
-                <div>
-                  <p className="text-white/40">Avg</p>
-                  <p className="mt-0.5 font-mono text-xs text-white">${t.avgSize}</p>
-                </div>
-              </div>
-
-              <div className="mt-2 h-1 overflow-hidden rounded-full bg-white/[0.05]">
-                <div className={`h-full ${t.winRate >= 65 ? "bg-green-400" : "bg-emerald-400"}`} style={{ width: `${t.winRate}%` }} />
-              </div>
-
-              <div className="mt-3 flex items-center justify-between">
-                <div className="flex items-center gap-2 text-[10px] text-white/40">
-                  <span className="flex items-center gap-1"><Users className="h-3 w-3" /> {t.followers.toLocaleString()} followers</span>
-                  <span>·</span>
-                  <span>{t.copying} copying</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  {t.tags.slice(0, 2).map((tag) => (
-                    <span key={tag} className="rounded bg-white/[0.05] px-1.5 py-px text-[9px] text-white/60">{tag}</span>
-                  ))}
-                </div>
-              </div>
-
-              <button
-                onClick={() => toggleCopy(t.wallet)}
-                className={`mt-3 flex w-full items-center justify-center gap-1.5 rounded-md py-1.5 text-xs font-bold transition ${
-                  copied[t.wallet]
-                    ? "bg-green-500/20 text-green-300 ring-1 ring-green-500/40"
-                    : "bg-emerald-500 text-white hover:bg-emerald-500"
-                }`}
-              >
-                {copied[t.wallet] ? (
-                  <>
-                    <Check className="h-3.5 w-3.5" /> Copying · ${copyAmount}/trade
-                  </>
-                ) : (
-                  <>
-                    <CopyIcon className="h-3.5 w-3.5" /> Copy · ${copyAmount}/trade
-                  </>
-                )}
-              </button>
-            </div>
-          ))}
+      {/* Wallet search */}
+      <div className="flex items-center gap-2 px-4 pt-4 lg:px-6">
+        <div className="flex flex-1 items-center gap-2.5 rounded-lg border border-white/[0.13] bg-white/[0.02] px-3.5 py-2.5">
+          <Search className="h-4 w-4 text-white/30" />
+          <input
+            value={walletQuery}
+            onChange={(e) => setWalletQuery(e.target.value)}
+            placeholder="Search any wallet address to copy (0x...)"
+            className="flex-1 bg-transparent font-mono text-xs text-white/80 placeholder:text-white/25 outline-none"
+          />
         </div>
+        <button
+          className={`rounded-lg px-4 py-2.5 text-xs font-semibold transition ${
+            walletQuery.trim()
+              ? "bg-emerald-500 text-white hover:bg-emerald-400"
+              : "bg-emerald-500/20 text-emerald-300/60 cursor-default"
+          }`}
+        >
+          Look Up
+        </button>
+      </div>
+
+      {/* Tabs */}
+      <div className="mt-4 flex items-center gap-6 border-b border-white/[0.08] px-4 text-xs lg:px-6">
+        {tabs.map((t) => {
+          const Icon = t.icon;
+          const active = tab === t.id;
+          return (
+            <button
+              key={t.id}
+              onClick={() => setTab(t.id)}
+              className={`flex items-center gap-1.5 border-b-2 pb-2.5 transition ${
+                active
+                  ? "border-emerald-500 font-semibold text-white"
+                  : "border-transparent text-white/40 hover:text-white"
+              }`}
+            >
+              <Icon className="h-3.5 w-3.5" />
+              {t.label}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Content */}
+      <div className="flex-1 overflow-auto">
+        {tab === "targets" && (
+          <div className="flex flex-col items-center justify-center px-6 py-20 text-center">
+            <div className="flex h-14 w-14 items-center justify-center rounded-xl border border-emerald-500/20 bg-emerald-500/[0.08]">
+              <Target className="h-6 w-6 text-emerald-400" />
+            </div>
+            <p className="mt-4 text-sm font-semibold text-white">No copy targets yet</p>
+            <p className="mt-1 text-xs text-white/40">Search for a wallet above or browse the leaderboard</p>
+            <button
+              onClick={() => setTab("discover")}
+              className="mt-5 flex items-center gap-1.5 rounded-lg border border-emerald-500/40 px-4 py-2 text-xs font-semibold text-emerald-300 hover:bg-emerald-500/10 transition"
+            >
+              <Sparkles className="h-3.5 w-3.5" />
+              Browse Top Traders
+            </button>
+          </div>
+        )}
+
+        {tab === "performance" && (
+          <div className="flex flex-col items-center justify-center px-6 py-20 text-center">
+            <div className="flex h-14 w-14 items-center justify-center rounded-xl border border-white/[0.08] bg-white/[0.03]">
+              <BarChart3 className="h-6 w-6 text-white/30" />
+            </div>
+            <p className="mt-4 text-sm font-semibold text-white">No performance data yet</p>
+            <p className="mt-1 text-xs text-white/40">Add copy targets to start tracking mirrored P&L</p>
+          </div>
+        )}
+
+        {tab === "discover" && (
+          <div className="grid gap-3 p-4 md:grid-cols-2 xl:grid-cols-3 lg:px-6">
+            {TRADERS.map((t) => (
+              <div key={t.wallet} className="group rounded-xl border border-white/[0.06] bg-[#0d1410]/60 p-4 transition hover:border-emerald-500/30">
+                <div className="flex items-start justify-between">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      <p className="truncate text-sm font-bold text-white">{t.alias ?? t.wallet}</p>
+                      {t.proVerified && (
+                        <span className="flex items-center gap-0.5 rounded bg-yellow-500/15 px-1.5 py-px text-[9px] font-bold text-yellow-300">
+                          <Star className="h-2.5 w-2.5 fill-current" /> PRO
+                        </span>
+                      )}
+                    </div>
+                    {t.alias && <p className="font-mono text-[10px] text-emerald-300/70">{t.wallet}</p>}
+                  </div>
+                  <div className="text-right">
+                    <p className="text-[10px] text-white/40">30D P&L</p>
+                    <p className="text-base font-bold text-green-400">+${(t.pnl30d / 1000).toFixed(1)}K</p>
+                  </div>
+                </div>
+
+                <div className="mt-3 grid grid-cols-4 gap-2 text-center text-[10px]">
+                  <div>
+                    <p className="text-white/40">ROI</p>
+                    <p className={`mt-0.5 font-mono text-xs font-semibold ${t.roi >= 20 ? "text-green-400" : "text-white"}`}>+{t.roi.toFixed(1)}%</p>
+                  </div>
+                  <div>
+                    <p className="text-white/40">Win</p>
+                    <p className={`mt-0.5 font-mono text-xs font-semibold ${t.winRate >= 65 ? "text-green-400" : "text-white"}`}>{t.winRate}%</p>
+                  </div>
+                  <div>
+                    <p className="text-white/40">Trades</p>
+                    <p className="mt-0.5 font-mono text-xs text-white">{t.trades}</p>
+                  </div>
+                  <div>
+                    <p className="text-white/40">Avg</p>
+                    <p className="mt-0.5 font-mono text-xs text-white">${t.avgSize}</p>
+                  </div>
+                </div>
+
+                <div className="mt-2 h-1 overflow-hidden rounded-full bg-white/[0.05]">
+                  <div className={`h-full ${t.winRate >= 65 ? "bg-green-400" : "bg-emerald-400"}`} style={{ width: `${t.winRate}%` }} />
+                </div>
+
+                <div className="mt-3 flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-[10px] text-white/40">
+                    <span className="flex items-center gap-1"><Users className="h-3 w-3" /> {t.followers.toLocaleString()}</span>
+                    <span>·</span>
+                    <span>{t.copying} copying</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    {t.tags.slice(0, 2).map((tag) => (
+                      <span key={tag} className="rounded bg-white/[0.05] px-1.5 py-px text-[9px] text-white/60">{tag}</span>
+                    ))}
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => toggleCopy(t.wallet)}
+                  className={`mt-3 flex w-full items-center justify-center gap-1.5 rounded-full py-1.5 text-xs font-bold transition ${
+                    copied[t.wallet]
+                      ? "bg-green-500/20 text-green-300 ring-1 ring-green-500/40"
+                      : "bg-emerald-500 text-white hover:bg-emerald-400"
+                  }`}
+                >
+                  {copied[t.wallet] ? (
+                    <><Check className="h-3.5 w-3.5" /> Copying</>
+                  ) : (
+                    <><CopyIcon className="h-3.5 w-3.5" /> Copy Wallet</>
+                  )}
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
