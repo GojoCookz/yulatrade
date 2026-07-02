@@ -149,14 +149,14 @@ function Sparkline({ trend, id }: { trend: Trend; id: string }) {
 function Thumb({ m }: { m: Market }) {
   if (m.cc) {
     return (
-      <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-md ring-1 ring-white/10">
+      <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-lg ring-1 ring-white/[0.18]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={`https://flagcdn.com/w80/${m.cc}.png`} alt="" className="h-full w-full object-cover" />
       </div>
     );
   }
   return (
-    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-gradient-to-br from-orange-400 to-orange-600 text-sm font-bold text-white ring-1 ring-white/10">
+    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-orange-400 to-orange-600 text-base font-bold text-white ring-1 ring-white/[0.18]">
       ₿
     </div>
   );
@@ -508,17 +508,19 @@ export default function TrendingClient() {
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
       {/* Toolbar */}
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/5 bg-[#050505] px-3 py-2">
-        <div className="flex flex-wrap items-center gap-3">
-          <h1 className="text-sm font-bold text-white">Trending</h1>
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-[#050505] px-4 py-4 lg:px-6">
+        <div className="flex flex-wrap items-center gap-4">
+          <h1 className="text-xl font-bold tracking-tight text-white">Trending</h1>
 
-          <div className="flex items-center gap-0.5 rounded-lg bg-white/5 p-0.5">
+          <div className="flex items-center gap-1">
             {PERIODS.map((tf) => (
               <button
                 key={tf}
                 onClick={() => setPeriod(tf)}
-                className={`rounded-md px-2 py-0.5 text-[10px] font-medium transition-colors ${
-                  period === tf ? "bg-emerald-500/80 text-white" : "text-white/50 hover:text-white/80"
+                className={`rounded-md px-2.5 py-1 text-xs font-semibold transition-colors ${
+                  period === tf
+                    ? "bg-emerald-500/20 text-emerald-300 ring-1 ring-emerald-400/40"
+                    : "text-white/40 hover:text-white/80"
                 }`}
               >
                 {tf}
@@ -528,10 +530,10 @@ export default function TrendingClient() {
 
           <button
             onClick={() => { setDraft(applied); setFiltersOpen(true); }}
-            className={`flex items-center gap-1 rounded-md border px-2 py-0.5 text-[10px] transition-colors ${
+            className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
               activeFilterCount
                 ? "border-emerald-500/40 text-emerald-300"
-                : "border-white/10 text-white/50 hover:text-white/70"
+                : "border-white/[0.13] bg-white/[0.03] text-white/60 hover:text-white"
             }`}
           >
             <FilterIcon className="h-3 w-3" />
@@ -542,21 +544,21 @@ export default function TrendingClient() {
             <RefreshCw className={`h-3.5 w-3.5 ${spinning ? "animate-spin" : ""}`} />
           </button>
 
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1.5">
             <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-            <span className="text-[10px] font-semibold text-green-400">LIVE</span>
+            <span className="text-[11px] font-semibold tracking-wide text-green-400">LIVE</span>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5 rounded-md border border-white/10 bg-white/5 px-2 py-1">
-            <Search className="h-3 w-3 text-white/40" />
+          <div className="flex items-center gap-2 rounded-lg border border-white/[0.13] bg-white/[0.03] px-3 py-1.5">
+            <Search className="h-3.5 w-3.5 text-white/40" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search markets..."
-              className="w-28 bg-transparent text-[11px] text-white/80 placeholder:text-white/30 outline-none sm:w-36"
+              className="w-28 bg-transparent text-xs text-white/80 placeholder:text-white/30 outline-none sm:w-36"
             />
             {search && (
               <button onClick={() => setSearch("")} className="text-white/30 hover:text-white" aria-label="Clear search">
@@ -565,15 +567,16 @@ export default function TrendingClient() {
             )}
           </div>
 
-          <button className="hidden items-center gap-1 rounded-md bg-yellow-500/20 px-2.5 py-1 text-[10px] font-semibold text-yellow-400 hover:bg-yellow-500/30 transition-colors sm:flex">
-            <Zap className="h-3 w-3" />
+          <button className="hidden items-center gap-1.5 rounded-lg border border-white/[0.13] bg-white/[0.03] px-3 py-1.5 text-xs font-medium text-white/60 hover:text-yellow-300 transition-colors sm:flex">
+            <Zap className="h-3.5 w-3.5 text-yellow-400/80" />
             Quick Buy $
           </button>
         </div>
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-auto">
+      <div className="flex flex-1 flex-col overflow-hidden md:px-4 md:pb-4 lg:px-6">
+        <div className="flex-1 overflow-auto md:rounded-xl md:border md:border-white/[0.08] md:bg-white/[0.015]">
         {sorted.length === 0 && (
           <div className="flex flex-col items-center justify-center px-6 py-24 text-center">
             <p className="text-sm text-white/60">No markets match</p>
@@ -624,7 +627,7 @@ export default function TrendingClient() {
                     </span>
                     <span className="text-white/40">Vol {fmtMoney(m.vol * mult)}</span>
                   </div>
-                  <span className="inline-flex items-center gap-0.5 rounded-md bg-emerald-500 px-3 py-1 text-xs font-semibold text-white">
+                  <span className="inline-flex items-center gap-0.5 rounded-full bg-emerald-500 px-3.5 py-1.5 text-xs font-semibold text-white">
                     Trade →
                   </span>
                 </div>
@@ -635,7 +638,7 @@ export default function TrendingClient() {
 
         {/* Desktop: full table */}
         <table className="hidden w-full text-sm md:table">
-          <thead className="sticky top-0 z-10 bg-[#050505]">
+          <thead className="sticky top-0 z-10 bg-[#0b0b0d]">
             <tr className="text-[11px] uppercase tracking-wider text-white/35">
               <th className="px-4 py-3 text-left font-medium">Market</th>
               <th className="px-3 py-3 text-center font-medium">Chart</th>
@@ -655,9 +658,9 @@ export default function TrendingClient() {
                 <tr
                   key={m.slug}
                   ref={setRowRef(m.slug) as React.Ref<HTMLTableRowElement>}
-                  className="group border-t border-white/[0.04] transition-colors hover:bg-white/[0.02]"
+                  className="group border-t border-white/[0.06] transition-colors hover:bg-white/[0.03]"
                 >
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3.5">
                     <Link href={`/trade/${m.slug}`} className="flex items-center gap-3">
                       <Thumb m={m} />
                       <div className="min-w-0">
@@ -702,7 +705,7 @@ export default function TrendingClient() {
                       </button>
                       <Link
                         href={`/trade/${m.slug}`}
-                        className="inline-flex items-center gap-0.5 rounded-md bg-emerald-500 px-3 py-1 text-xs font-semibold text-white hover:bg-emerald-400 transition"
+                        className="inline-flex items-center gap-0.5 rounded-full bg-emerald-500 px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-emerald-400 transition"
                       >
                         Trade →
                       </Link>
@@ -713,6 +716,7 @@ export default function TrendingClient() {
             })}
           </tbody>
         </table>
+        </div>
       </div>
 
       <FiltersModal

@@ -42,7 +42,7 @@ export default function TerminalNav() {
   ] as const;
 
   return (
-    <nav className="sticky top-0 z-50 flex h-14 items-center justify-between bg-[#050505] px-4 border-b border-white/5">
+    <nav className="sticky top-0 z-50 flex h-14 items-center justify-between bg-[#050505] px-4 border-b border-white/[0.08]">
       <div className="flex items-center gap-6">
         <button
           onClick={() => setMobileOpen((o) => !o)}
@@ -65,7 +65,7 @@ export default function TerminalNav() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`relative px-3 py-1.5 text-sm font-medium transition ${
+                className={`relative whitespace-nowrap px-3 py-1.5 text-sm font-medium transition ${
                   isActive ? "text-emerald-400" : "text-white/70 hover:text-white"
                 }`}
               >
@@ -80,7 +80,7 @@ export default function TerminalNav() {
       </div>
 
       <div className="flex items-center gap-2 shrink-0">
-        <div className="hidden xl:flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5">
+        <div className="hidden xl:flex items-center gap-1.5 rounded-full border border-white/[0.13] bg-white/[0.05] px-3 py-1.5">
           <svg className="h-3 w-3 text-white/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <rect x="3" y="4" width="18" height="16" rx="2" />
             <path d="M3 10h18" />
@@ -94,7 +94,7 @@ export default function TerminalNav() {
           />
         </div>
 
-        <div className="hidden md:flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5">
+        <div className="hidden md:flex items-center gap-1.5 rounded-full border border-white/[0.13] bg-white/[0.05] px-3 py-1.5">
           <Search className="h-3 w-3 text-white/40" />
           <input
             type="text"
@@ -109,7 +109,7 @@ export default function TerminalNav() {
         {/* Mobile-only search icon (opens the drawer search) */}
         <button
           onClick={() => setMobileOpen((o) => !o)}
-          className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-white/60 hover:bg-white/[0.06] transition md:hidden"
+          className="flex h-8 w-8 items-center justify-center rounded-full border border-white/[0.13] bg-white/[0.05] text-white/60 hover:bg-white/[0.06] transition md:hidden"
           aria-label="Search"
         >
           <Search className="h-4 w-4" />
@@ -130,7 +130,7 @@ export default function TerminalNav() {
           <Bell className="h-4 w-4" />
         </button>
 
-        <button className="hidden md:flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.03] px-2.5 py-1.5 text-xs font-medium text-white hover:bg-white/[0.06] transition">
+        <button className="hidden md:flex items-center gap-1.5 rounded-full border border-white/[0.13] bg-white/[0.05] px-2.5 py-1.5 text-xs font-medium text-white hover:bg-white/[0.06] transition">
           <Wallet className="h-3.5 w-3.5 text-white/60" />
           <span className="flex items-center gap-1">
             <span className="inline-block h-3 w-3 rounded-full bg-blue-500" />
@@ -141,7 +141,7 @@ export default function TerminalNav() {
         {/* Desktop: account circle */}
         <button
           onClick={() => openAuth("login")}
-          className="hidden h-7 w-7 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-white/60 hover:bg-white/[0.06] transition md:flex"
+          className="hidden h-7 w-7 items-center justify-center rounded-full border border-white/[0.13] bg-white/[0.05] text-white/60 hover:bg-white/[0.06] transition md:flex"
           aria-label="Account"
         >
           <User className="h-3.5 w-3.5" />
@@ -164,7 +164,7 @@ export default function TerminalNav() {
             onClick={() => setMobileOpen(false)}
           />
           <div className="fixed inset-x-0 top-14 z-50 border-b border-white/10 bg-[#050505] px-3 py-3 lg:hidden">
-            <div className="mb-3 flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-2">
+            <div className="mb-3 flex items-center gap-2 rounded-full border border-white/[0.13] bg-white/[0.05] px-3 py-2">
               <Search className="h-3.5 w-3.5 text-white/40" />
               <input
                 type="text"
