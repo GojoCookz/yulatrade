@@ -161,7 +161,7 @@ function Thumb({ m }: { m: Market }) {
     return (
       <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-lg ring-1 ring-white/[0.18]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={`https://flagcdn.com/w80/${m.cc}.png`} alt="" className="h-full w-full object-cover" />
+        <img src={`/images/flags/${m.cc}.png`} alt="" className="h-full w-full object-cover" />
       </div>
     );
   }

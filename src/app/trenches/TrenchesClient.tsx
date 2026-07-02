@@ -91,7 +91,7 @@ function TrenchCard({ t }: { t: Trench }) {
         <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg ring-1 ring-white/[0.15] bg-zinc-900">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={getMarketImage(t.title) ?? `https://picsum.photos/seed/${encodeURIComponent(t.slug)}/112/112`}
+            src={getMarketImage(t.title) ?? `/images/markets/seed-${t.slug}.jpg`}
             alt=""
             className="h-full w-full object-cover"
             loading="lazy"
